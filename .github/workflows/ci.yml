@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ShellCheck 静态检查
+        run: shellcheck scripts/*.sh scripts/lib/*.sh tests/*.sh
+
+      - name: 语法检查（bash -n）
+        run: |
+          for f in scripts/*.sh scripts/lib/*.sh tests/*.sh; do
+            bash -n "$f"
+          done
+
+      - name: 脚本测试（dry-run，无需 NPU）
+        run: bash tests/test_scripts.sh

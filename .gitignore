@@ -1,0 +1,18 @@
+# 运行时产物
+run/
+logs/
+*.pid
+
+# 模型权重与缓存
+hf-cache/
+*.safetensors
+*.bin
+
+# 课件等第三方材料，不随仓库分发
+*.pptx
+
+# 系统与编辑器
+__pycache__/
+.DS_Store
+.vscode/
+.idea/
