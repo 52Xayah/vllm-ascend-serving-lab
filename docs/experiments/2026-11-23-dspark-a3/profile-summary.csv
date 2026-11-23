@@ -1,3 +1,3 @@
 mode,prompt_tokens,output_tokens,kernel_records,fused_infer_attention_score_calls,sum_kernel_durations_ms,first_to_last_kernel_ms
 baseline,11,32,14738,1152,300.68,1383.41
-dspark,11,32,10632,574,185.85,848.83
+dspark,11,32,10632,574,185.80,848.83
