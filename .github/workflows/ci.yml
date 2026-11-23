@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: ShellCheck 静态检查
-        run: shellcheck scripts/*.sh scripts/lib/*.sh tests/*.sh
+        run: shellcheck --source-path=SCRIPTDIR scripts/*.sh scripts/lib/*.sh tests/*.sh
 
       - name: 语法检查（bash -n）
         run: |
