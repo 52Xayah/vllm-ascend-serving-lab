@@ -18,6 +18,7 @@
 ## 实验设计
 
 - **环境**为 HiDevLab vLLM-Ascend 0.30.0 镜像。运行时为 vLLM 0.30.0+empty 与 vLLM-Ascend 0.30.0。主模型为 `Qwen/Qwen3-4B`，草稿为 `deepseek-ai/dspark_qwen3_4b_block7`，权重从 ModelScope 下载后从本地目录加载。
+- **镜像内源码提交**为 vLLM `ced6857afa0ea7b2e3f0846a62e1394e90f15607`、vLLM-Ascend `c09d3e20b9c45c80b34ae3781440d90904a44023`。完整环境记录与模型权重 SHA-256 见原始归档的 `environment.txt`。
 - **固定服务配置**为 BF16、TP=1、eager 模式、最大上下文 2048、最大同时调度序列数 16、批次 token 上限 4096、设备内存利用率参数 0.8、关闭异步调度及 prefix caching。客户端在同一台机器上访问回环地址。
 - **顺序**为「普通 → DSpark → DSpark → 普通」，每次独立启动服务并预热 8 个请求。前两次按并发 1、4、8、16 扫描，压测种子为 42，后两次反向扫描，种子为 43。同一组内两种模式使用相同的种子与并发顺序。
 - **负载**为每轮 24 条固定 512 输入 token、128 输出 token 的合成请求，设置 `--ignore-eos`，在固定客户端并发上限下持续发送。DSpark 接受指标取自 vLLM 压测内部采样窗口，单独的预热和初始探测请求不计入该窗口。
@@ -64,4 +65,4 @@ vllm bench serve --backend openai --endpoint /v1/completions \
 
 从详细结果 JSON 的 `ttfts` 数组计算 p95，再将秒换算为毫秒。单独采集 Profiler，先预热，再用 `/start_profile` 和 `/stop_profile` 包住一次贪心请求，从 `kernel_details.csv` 提取算子计数。采样请求使用提示词 `Complete this passage about how transformers use attention and memory:`，固定 `temperature=0`、`max_tokens=32`、`ignore_eos=true`。[vLLM-Ascend Profiler 指南](https://docs.vllm.ai/projects/ascend/en/main/developer_guide/performance_and_debug/service_profiling_guide.html)
 
-完整原始 JSON、Prometheus 快照、日志、执行脚本及 Profiler 时间线归档于实验环境的 `/workspace/dspark-study-20261123/dspark-a3-results-20261123.tar.gz`。本目录收录公开报告、逐轮指标摘录、性能图和 Profiler 指标摘录。
+完整原始 JSON、Prometheus 快照、日志、执行脚本及 Profiler 时间线保存在本地项目根目录的 `dspark-a3-results-20261123.tar.gz`。归档校验值见[项目 README](../../../README.md)的数据说明。本目录收录公开报告、逐轮指标摘录、性能图和 Profiler 指标摘录。
