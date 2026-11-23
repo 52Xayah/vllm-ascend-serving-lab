@@ -11,6 +11,10 @@
 
 模型为 `Qwen/Qwen3-4B`，投机解码使用 DSpark（草稿模型 `deepseek-ai/dspark_qwen3_4b_block7`）。
 
+## A3 推理性能实验
+
+在同一颗 Ascend910 上对 Qwen3-4B 完成普通解码与 DSpark 的 16 轮对照。并发上限为 1、4、8、16，DSpark 的输出吞吐提高 77.7%–90.3%，平均 TPOT 下降，p95 首 token 延迟升高。独立 Profiler 采样也记录到更少的 NPU kernel 执行。[实验报告、性能图和逐轮数据](docs/experiments/2026-11-23-dspark-a3/README.md)
+
 ## 目录结构
 
 ```
@@ -27,6 +31,7 @@ tests/
   test_scripts.sh     # 无需 NPU 的脚本测试
 docs/
   legacy-guide.md     # 原始手工部署指导书（脱敏副本，作为来源记录）
+  experiments/        # 实验报告和性能数据
 .github/workflows/ci.yml   # ShellCheck + 语法检查 + 测试
 ```
 
@@ -83,9 +88,8 @@ CI（GitHub Actions）在每次 push 和 PR 时执行：
 
 ## 尚未覆盖的范围
 
-- **未在真实 NPU 上重新验证。** 当前测试只覆盖脚本逻辑（参数组装、校验、dry-run 输出）。服务能否在目标环境启动，需要在有 NPU 的机器上实际运行一次。
+- 仓库中的双实例 Shell 部署入口尚未在真实 NPU 上重新验证。A3 性能实验使用同一设备顺序启动两个 vLLM 服务，启动参数见实验报告。
 - **测试工具（aisbench）安装脚本未包含。** 原指导书的 `setup-test.sh` 会拉取第三方仓库并修改其配置，后续单独处理。
-- **不包含性能数据。** 性能基准测试属于后续计划，数据需要在真实环境中产生。
 
 ## 来源说明
 
